@@ -1,6 +1,6 @@
 {
-    "appSecret": "",
-    "pageAccessToken": "",
-    "validationToken": "",
-    "serverURL": ""
+    "appSecret": "1239f0c1239014a1a6b247ea706b",
+    "pageAccessToken": "EAAEsFZBglX3EBAG7OP7sjyZCpTQV0jkQOOVNJB3GxSWbecw8tVHiUGJtrHhEfR2Xn5hS38w0PNRWwCyZCat6V7fbExh0ix6I0NQrtXIFafRIS0wZCJ6Fg3ZAeZB7Ii4DQHcLEvWyLEdHhkA83cOFLxz33b99RlqokR4yKXb36B4AZDZD",
+    "validationToken": "my_token",
+    "serverURL": "http://1231njka.ngrok.io/"
 }
