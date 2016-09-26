@@ -68,12 +68,40 @@
   - 5.2: Copy file vừa tải (và giải nén nếu cần) ra `Desktop/`. Chạy cmd tại `Desktop/` và gõ `ngrok.exe http 3000` (đối với windows) hoặc `./ngrok http 3000` (đối với ubuntu).
   
   Kết quả (như hình dưới). Để ý dòng `https://c34e8dd3.ngrok.io` -> Đây là thứ mà ta sẽ dùng trong phần **webhook** của facebook
+  
   ![ngrok-png](https://github.com/trieudh58/messenger-chatbot-guideline/blob/master/screenshots/ngrok.PNG)
   
 - Bước 6: Tạo một **Facebook Page**: [vào đây](https://www.facebook.com/pages/create/) rồi tự tạo một page. Giả sử ta đã tạo thành công được một page tên là `Cwat`
 
 - Bước 7: Tạo một **Facebook App**: [vào đây](https://developers.facebook.com/docs/apps/register) làm theo hướng dẫn và tạo một facebook app với tên bất kỳ. Lưu ý là phải đăng ký tài khoản developers với facebook. Tạo xong, giả sử tên app là `cwat`
 
-- Bước 8: Vào trang quản lý App, trong phần **Product** chọn **Add Product**, chọn **Messenger** ở mục **Product Setup** phía bên tay phải
-![app-add-product](https://github.com/trieudh58/messenger-chatbot-guideline/blob/master/screenshots/app-add-product.PNG)
+- Bước 8: 
+  - 8.1: Vào trang quản lý App, trong phần **Product** chọn **Add Product**, chọn **Messenger** ở mục **Product Setup** phía bên tay phải 
+  
+  ![app-add-product](https://github.com/trieudh58/messenger-chatbot-guideline/blob/master/screenshots/app-add-product.PNG)
+  
+  - 8.2: Chọn mục Messenger\Settings, Chọn Page và generate một token. Copy lại vào paste giá trị vào `pageAccessToken` trong `config/default.json` 
+  
+  ![token-generate](https://github.com/trieudh58/messenger-chatbot-guideline/blob/master/screenshots/token-generation.PNG)
+  
+  - 8.3: Subscribe Page vào App: ![page-subscribe](https://github.com/trieudh58/messenger-chatbot-guideline/blob/master/screenshots/page-subscribe.PNG)
+  
+  - 8.4: Thêm webhook: URL là địa chỉ mà `ngrok` đã tạo cho ta ở bước 5.2, cộng thêm `/webhook`. Đồng thời điên địa chỉ này (không bao gồm `/webhook` vào `serverURL` trong `config\default.json`)
+  
+  Vào App Dashboard. Trong mục App Secret, chọn Show để lấy giá trị `appSecret`. Copy vào trong `config\default.json` 
+  
+  ![app-secret](https://github.com/trieudh58/messenger-chatbot-guideline/blob/master/screenshots/app-secret.PNG)
+  
+  Mục `Verify Token` thì điền `my_token`, đồng thời điền `my_token` cho giá trị của `validationToken` trong file `config/default.json` 
+  
+  ![webhook](https://github.com/trieudh58/messenger-chatbot-guideline/blob/master/screenshots/webhook.PNG)
+  
+  Lưu ý: Điền file `config/default.json` trước, sau đó save lại. Sau đó trong giao diện của faceook app, điền webhook URL, verify token và ấn Verify.
+  File `config/default.json` có dạng như sau: 
+  
+  ![config-default-json](https://github.com/trieudh58/messenger-chatbot-guideline/blob/master/screenshots/default-json.png)
+  
+- Bước 9: Vào chat với page đã subscribe để test thử bot. 
+
+  Bot chưa được public nên chỉ có admin chat là bot sẽ nhận request để trả lời. Tính năng mặc định của bot là trả lời một số tin nhắn theo mẫu (VD: 'image', 'receipt', 'quick reply',...), còn lại bot sẽ echo mọi tin nhắn đến khác.
 
