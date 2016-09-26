@@ -4,6 +4,7 @@
 - `config/`: chứa các biến môi trường dùng chung cho cả project. Các biến này được mô tả trong file `default.json` dưới dạng `key:value`.
 
   Ví dụ ta cần đọc giá trị của `pageAccessToken` thì ta có thể đạt được bằng cách gọi: `config('pageAccessToken')`; trong đó `config` thực chất là một thư viện giúp đọc file `config/default.json` - sẽ giới thiệu về thư viện trong mục `node_modules` dưới đây.
+  
 - `node_modules/`: là folder chứa các thư viện (libs/dependencies) hỗ trợ nodejs. Các thư viện được quản lý bởi `npm` ([node package management](https://www.npmjs.com/)).
   
   npm hỗ trợ việc cài đặt, gỡ và quản lý các thư viện mà ta cần sử dụng trong project. Các mô tả về project đều nằm trong file `package.json` mà ta có thể tạo ra bằng lệnh `npm init` từ Terminal (hoặc có thể tạo tay).
@@ -40,6 +41,39 @@
   }
   ```
 - `public/`: chứa các content static để gửi đi (ảnh, video, audio, html files...)
+
 - `views/`: views engine phục vụ xem trên trình duyệt. Không cần quan tâm file này.
+
 - `app.js`: file chính của cả chương trình. Trong code mẫu của facebook, họ để chung code ở mỗi một file này, còn khi chúng ta làm product thật thì hiển nhiên phải cấu trúc lại thư mục, không thể để code ở chung một file được.
+
 - `package.json`: như đã giới thiệu, là file mô tả project (tựa như pom.xml của maven). File này được đọc và ghi bởi `npm`
+
+## Chạy thử bot
+- Bước 1: Clone mã nguồn từ repo này về `git clone https://github.com/trieudh58/messenger-chatbot-guideline.git`
+
+- Bước 2: Download và cài đặt Nodejs [tại đây](https://nodejs.org/en/download/).
+
+- Bước 3: Cài đặt các thư viện
+  - 3.1: Chạy `cmd` tại thư mục `messenger-chatbot-guideline`
+  
+  - 3.2: Chạy lệnh `npm install` để cài các thư viện. Sau khi chạy xong, sẽ xuất hiện thư mục mới là `node_modules`. Bên trong thư mục này chứa các thư viện cần thiết để chạy được app.
+  
+- Bước 4: Chạy app: Từ `cmd` gõ `node app.js`
+  
+  Nếu thành công, sẽ xuất hiện dòng `Node app is running on port 3000`.
+  
+- Bước 5: Cài 1 phần mềm tên là `ngrok` để kết nối localhost:3000 (nơi đang chạy nodejs service) với thể giới internet bên ngoài. Hiểu nôm na là `ngrok` sẽ cung cấp 1 proxy để routing traffic (hoặc request) từ bên ngoài đến localhost:3000. Các bước thực hiện:
+  - 5.1: Tải `ngrok` [tại đây](https://ngrok.com/) - không cần đăng ký tài khoản đâu nhé.
+  
+  - 5.2: Copy file vừa tải (và giải nén nếu cần) ra `Desktop/`. Chạy cmd tại `Desktop/` và gõ `ngrok.exe http 3000` (đối với windows) hoặc `./ngrok http 3000` (đối với ubuntu).
+  
+  Kết quả (như hình dưới). Để ý dòng `https://c34e8dd3.ngrok.io` -> Đây là thứ mà ta sẽ dùng trong phần **webhook** của facebook
+  ![ngrok-png](https://github.com/trieudh58/messenger-chatbot-guideline/blob/master/screenshots/ngrok.PNG)
+  
+- Bước 6: Tạo một **Facebook Page**: [vào đây](https://www.facebook.com/pages/create/) rồi tự tạo một page. Giả sử ta đã tạo thành công được một page tên là `Cwat`
+
+- Bước 7: Tạo một **Facebook App**: [vào đây](https://developers.facebook.com/docs/apps/register) làm theo hướng dẫn và tạo một facebook app với tên bất kỳ. Lưu ý là phải đăng ký tài khoản developers với facebook. Tạo xong, giả sử tên app là `cwat`
+
+- Bước 8: Vào trang quản lý App, trong phần **Product** chọn **Add Product**, chọn **Messenger** ở mục **Product Setup** phía bên tay phải
+![app-add-product](https://github.com/trieudh58/messenger-chatbot-guideline/blob/master/screenshots/app-add-product.PNG)
+
