@@ -8,22 +8,25 @@
  */
 
 /* jshint node: true, devel: true */
-'use strict';
+'use strict'; // sử dụng strict mode của javascript
 
+// Load/Import/Require các thư viện cần dùng
 const 
-  bodyParser = require('body-parser'),
-  config = require('config'),
-  crypto = require('crypto'),
-  express = require('express'),
-  https = require('https'),  
-  request = require('request');
+  bodyParser = require('body-parser'), // thư viện hỗ trợ xử lý raw http request đến nodejs service
+  config = require('config'), // thư viện hỗ trợ đọc các file config/*
+  crypto = require('crypto'), // thư viện hỗ trợ mã hóa
+  express = require('express'), // thư viện framework expressjs
+  https = require('https'),   // thư viện hỗ trợ https
+  request = require('request'); // thư viện hỗ trợ send http request.
 
+// Khởi tạo app và cài đặt các môi trường cần thiết
 var app = express();
-app.set('port', process.env.PORT || 5000);
+app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
 app.use(bodyParser.json({ verify: verifyRequestSignature }));
 app.use(express.static('public'));
 
+// Đoạn const dưới đây dùng để lấy giá trị của các hằng số APP_SECRET, VALIDATION_TOKEN,... từ file config/default.json
 /*
  * Be sure to setup your config values before running this code. You can 
  * set them using environment variables or modifying the config file in /config.
@@ -61,9 +64,12 @@ if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL)) {
  * setup is the same token used here.
  *
  */
+// Bắt route /webhook khi Facebook app gửi một request đến https://a7184hnn4.ngrok.io/webhook
+// Khi điền xong callback URL và validation token, ấn verify thì facebook app sẽ gửi http request đến chỗ này.
+// Nếu verify thành công thì trả lại statusCode 200.
 app.get('/webhook', function(req, res) {
   if (req.query['hub.mode'] === 'subscribe' &&
-      req.query['hub.verify_token'] === VALIDATION_TOKEN) {
+      req.query['hub.verify_token'] === VALIDATION_TOKEN) { // So sánh VALIDATION_TOKEN (my_token) mà bạn đã điền vào trong ô của facebook app với giá trị mà bạn đặt trong config/default.json. Nếu 2 cái này khớp thì verify thành công.
     console.log("Validating webhook");
     res.status(200).send(req.query['hub.challenge']);
   } else {
@@ -80,6 +86,10 @@ app.get('/webhook', function(req, res) {
  * https://developers.facebook.com/docs/messenger-platform/product-overview/setup#subscribe_app
  *
  */
+ 
+ // Với mỗi tin nhắn người dùng gửi đến Page, một http post request sẽ được facebook app gửi đến nodejs server.
+ // Hàm dưới đây có nhiệm vụ bắt request đó để xử lý các sự kiện tin nhắn chứa trong data.entry
+ // Sau đó gửi lại 1 statusCode 200 cho facebook để báo rằng nodejs server đã nhận thành công request đến.
 app.post('/webhook', function (req, res) {
   var data = req.body;
 
@@ -124,6 +134,8 @@ app.post('/webhook', function (req, res) {
  * (sendAccountLinking) is pointed to this URL. 
  * 
  */
+ 
+// Phục vụ cho account linking (khi người dùng cần đăng nhập trước khi chat với bot) -> phần này chưa cần quan tâm đến.
 app.get('/authorize', function(req, res) {
   var accountLinkingToken = req.query['account_linking_token'];
   var redirectURI = req.query['redirect_uri'];
@@ -150,6 +162,10 @@ app.get('/authorize', function(req, res) {
  * https://developers.facebook.com/docs/graph-api/webhooks#setup
  *
  */
+ 
+// xác thực request đến từ facebook bằng cách: facebook sẽ mã hóa APP_SECRET và gửi đi như một signature
+// Nodejs đọc signature đó và so sánh với APP_SECRET (sau khi đã được hash)
+// Nếu 2 giá trị này trùng nhau thì xác thực thành công, request tiếp tục được xử lý. Nếu không, throw một error
 function verifyRequestSignature(req, res, buf) {
   var signature = req.headers["x-hub-signature"];
 
@@ -180,6 +196,9 @@ function verifyRequestSignature(req, res, buf) {
  * https://developers.facebook.com/docs/messenger-platform/webhook-reference/authentication
  *
  */
+ 
+// Sự kiện xác thực người dùng
+// Sử dụng cho Send to messenger plugin
 function receivedAuthentication(event) {
   var senderID = event.sender.id;
   var recipientID = event.recipient.id;
@@ -215,6 +234,9 @@ function receivedAuthentication(event) {
  * then we'll simply confirm that we've received the attachment.
  * 
  */
+ 
+// Sự kiện nhận được một tin nhắn mới.
+// Đây là sự kiện quan trọng, đa phần chúng ta cần implement để xử lý chỗ này.
 function receivedMessage(event) {
   var senderID = event.sender.id;
   var recipientID = event.recipient.id;
